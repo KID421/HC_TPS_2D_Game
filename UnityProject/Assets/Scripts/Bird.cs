@@ -10,8 +10,14 @@ public class Bird : MonoBehaviour
     public bool dead;
     [Header("剛體")]
     public Rigidbody2D r2d;
+    [Header("遊戲管理器")]
+    public GameManager gm;
 
     public GameObject goScore, goGM;
+    // AudioSource 存放喇叭元件
+    // AudioClip 存放音效檔案
+    public AudioSource aud;
+    public AudioClip soundJump, soundHit, soundAdd;
 
     /// <summary>
     /// 小雞跳躍方法。
@@ -33,6 +39,7 @@ public class Bird : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             print("玩家按下左鍵~");
+            aud.PlayOneShot(soundJump, 1.5f);   // 喇叭.播放一次音效(音效，音量)
             r2d.Sleep();                        // 小雞剛體.睡著() - 重設剛體所有資訊
             r2d.gravityScale = 1;               // 小雞剛體.重力 = 1;
             r2d.AddForce(new Vector2(0, jump)); // 小雞剛體.增加推力(二維向量(左右，上下));
@@ -50,11 +57,13 @@ public class Bird : MonoBehaviour
     private void Dead()
     {
         print("死亡!!!");
+        aud.PlayOneShot(soundHit, 1.5f);
         dead = true;
+        gm.GameOver();
     }
 
     // 固定幀數 0.002 一幀：要控制物理請寫在此事件內
-    private void FixedUpdate()
+    private void Update()
     {
         Jump();
     }
@@ -68,6 +77,26 @@ public class Bird : MonoBehaviour
         if (hit.gameObject.name == "地板")
         {
             Dead();
+        }
+    }
+
+    // 事件：觸發開始 - 物件必須勾選  IsTrigger
+    private void OnTriggerEnter2D(Collider2D hit)
+    {
+        // 如果 碰到.物件名稱 為 上 或者 下 - 死亡
+        if (hit.name == "水管 - 上" || hit.name == "水管 - 下")
+        {
+            Dead();
+        }
+    }
+    
+    // 事件：觸發離開 - 物件離開觸發區域執行一次
+    private void OnTriggerExit2D(Collider2D hit)
+    {
+        if (hit.name == "加分")
+        {
+            aud.PlayOneShot(soundAdd, 0.7f);
+            gm.AddScore();
         }
     }
 }
