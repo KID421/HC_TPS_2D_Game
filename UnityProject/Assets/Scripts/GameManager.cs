@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;   // 引用 介面 API
+using UnityEngine.UI;                   // 引用 介面 API
+using UnityEngine.SceneManagement;      // 引用 場景管理 API
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject goFinal;
     [Header("分數介面")]
     public Text textScore;
+    public Text textBest;
     
     // static 不會顯示在屬性 Inspector 面板上
     public static bool gameOver;
@@ -31,6 +33,9 @@ public class GameManager : MonoBehaviour
         // 分數介面.文字內容 = 分數.轉為字串()
         // ToString() 可以將任何類型轉為字串
         textScore.text = score.ToString();
+
+        // 呼叫最佳分數判定
+        HeightScore();
     }
     
     /// <summary>
@@ -38,9 +43,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void HeightScore()
     {
-
+        // 如果 目前分數 > 最佳分數
+        if (score > PlayerPrefs.GetInt("最佳分數"))
+        {
+            // 玩家資料.設定整數("最佳分數"，目前分數)
+            PlayerPrefs.SetInt("最佳分數", score);
+        }
     }
-
+    #region
     /// <summary>
     /// 生成水管。
     /// </summary>
@@ -69,9 +79,31 @@ public class GameManager : MonoBehaviour
         CancelInvoke("SpawnPipe");  // 停止 InvokeRepeating、Invoke 的方法
     }
 
+    // 要給 UI 按鈕呼叫的方法必須是 public
+    /// <summary>
+    /// 重新遊戲
+    /// </summary>
+    public void Replay()
+    {
+        // Application.LoadLevel("遊戲場景");  // 應用程式.載入場景("場景名稱"); 舊版 API
+        SceneManager.LoadScene("遊戲場景");    // 場景管理器.載入場景("場景名稱"); 新版 API
+    }
+
+    /// <summary>
+    /// 離開遊戲
+    /// </summary>
+    public void Quit()
+    {
+        Application.Quit(); // 使用 應用程式.離開();
+    }
+    #endregion
+    // 遊戲開始與載入場景會執行一次
     private void Start()
     {
+        // 靜態成員在載入場景都不會還原
+        gameOver = false;
         // 重複調用("方法名稱"，開始時間，間隔時間)
         InvokeRepeating("SpawnPipe", 0, 1.5f);
+        textBest.text = PlayerPrefs.GetInt("最佳分數").ToString();
     }
 }

@@ -93,7 +93,10 @@ public class Bird : MonoBehaviour
     // 事件：觸發離開 - 物件離開觸發區域執行一次
     private void OnTriggerExit2D(Collider2D hit)
     {
-        if (hit.name == "加分")
+        // dead == true 簡寫 dead
+        // dead != true 簡寫 !dead
+
+        if (hit.name == "加分" && !dead)
         {
             aud.PlayOneShot(soundAdd, 0.7f);
             gm.AddScore();
