@@ -100,6 +100,8 @@ public class GameManager : MonoBehaviour
     // 遊戲開始與載入場景會執行一次
     private void Start()
     {
+        // 螢幕.設定解析度(寬，高，是否全螢幕)
+        Screen.SetResolution(450, 800, false);
         // 靜態成員在載入場景都不會還原
         gameOver = false;
         // 重複調用("方法名稱"，開始時間，間隔時間)

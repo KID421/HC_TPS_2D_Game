@@ -46,6 +46,10 @@ public class Bird : MonoBehaviour
             goScore.SetActive(true);            // 分數 顯示
             goGM.SetActive(true);               // GM 顯示
         }
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            r2d.gravityScale = 3;
+        }
         // Rigidbody2D.SetRotation(float) 設定角度(角度)
         // Rigidbody2D.velocity 加速度 (二維向量 x, y)
         r2d.SetRotation(angle * r2d.velocity.y);
